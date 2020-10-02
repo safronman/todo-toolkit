@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react'
+import React, { useCallback, useEffect } from 'react'
 import './App.css'
 import {
     AppBar,
@@ -10,15 +10,16 @@ import {
     Toolbar,
     Typography
 } from '@material-ui/core'
-import {Menu} from '@material-ui/icons'
-import {TodolistsList} from '../features/TodolistsList/TodolistsList'
-import {ErrorSnackbar} from '../components/ErrorSnackbar/ErrorSnackbar'
-import {useDispatch, useSelector} from 'react-redux'
-import {AppRootStateType} from './store'
-import {initializeAppTC, RequestStatusType} from './app-reducer'
-import {BrowserRouter, Route} from 'react-router-dom'
-import {Login} from '../features/Login/Login'
-import {logoutTC} from '../features/Login/auth-reducer'
+import { Menu } from '@material-ui/icons'
+import { TodolistsList } from '../features/TodolistsList/TodolistsList'
+import { ErrorSnackbar } from '../components/ErrorSnackbar/ErrorSnackbar'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppRootStateType } from './store'
+import { initializeAppTC, RequestStatusType } from './app-reducer'
+import { Route } from 'react-router-dom'
+import { Login } from '../features/Login/Login'
+import { logoutTC } from '../features/Login/auth-reducer'
+
 
 type PropsType = {
     demo?: boolean
