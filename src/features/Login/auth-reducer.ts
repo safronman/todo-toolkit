@@ -1,14 +1,28 @@
 import { Dispatch } from 'redux'
 import { setAppStatusAC } from '../../app/app-reducer'
-import { authAPI, LoginParamsType } from '../../api/todolists-api'
+import { authAPI, FieldErrorType, LoginParamsType } from '../../api/todolists-api'
 import { handleServerAppError, handleServerNetworkError } from '../../utils/error-utils'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
 
 const initialState = {
     isLoggedIn: false
 }
 
-export const loginTC = createAsyncThunk('auth/loginTC', async (param: LoginParamsType, thunkAPI) => {
+// 1. То, что возвращает Thunk
+// 2. ThunkArg - аргументы санки.
+// 3. ThunkApiConfig содержит следующие поля
+/*declare type AsyncThunkConfig = {
+    state?: unknown;
+    dispatch?: Dispatch;
+    extra?: unknown;
+    rejectValue?: unknown;
+};*/
+// Но нам для отобржения ошибки нужен rejectValue
+export const loginTC = createAsyncThunk<
+    {isLoggedIn: boolean},
+    LoginParamsType,
+    {rejectValue: {errors: Array<string>, fieldsErrors?: Array<FieldErrorType>}}>('auth/loginTC', async (param, thunkAPI) => {
     thunkAPI.dispatch(setAppStatusAC({status: 'loading'}))
     try {
         const res = await authAPI.login(param)
@@ -18,11 +32,12 @@ export const loginTC = createAsyncThunk('auth/loginTC', async (param: LoginParam
             return {isLoggedIn: true}
         } else {
             handleServerAppError(res.data, thunkAPI.dispatch)
-            return {isLoggedIn: false}
+            return thunkAPI.rejectWithValue({errors: res.data.messages, fieldsErrors: res.data.fieldsErrors})
         }
-    } catch (error) {
+    } catch (err) {
+        const error: AxiosError = err
         handleServerNetworkError(error, thunkAPI.dispatch)
-        return {isLoggedIn: false}
+        return thunkAPI.rejectWithValue({errors: [error.message], fieldsErrors: undefined})
     }
 })
 
